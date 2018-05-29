@@ -215,7 +215,7 @@
 #define IFCOMMA_NOFIRST123 ,
 #define IFCOMMA_NOFIRST124 ,
 
-#define DEC(x) C2(DEC,x)
+//#define DEC(x) C2(DEC,x)
 #define DEC1024 1023
 #define DEC1023 1022
 #define DEC1022 1021

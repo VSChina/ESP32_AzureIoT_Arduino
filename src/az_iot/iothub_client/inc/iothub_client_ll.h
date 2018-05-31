@@ -533,7 +533,7 @@ extern "C"
      */
      MOCKABLE_FUNCTION(, IOTHUB_CLIENT_RESULT, IoTHubClient_LL_DeviceMethodResponse, IOTHUB_CLIENT_LL_HANDLE, iotHubClientHandle, METHOD_HANDLE, methodId, const unsigned char*, response, size_t, respSize, int, statusCode);
 
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
     /**
     * @brief	This API uploads to Azure Storage the content pointed to by @p source having the size @p size
     *           under the blob name devicename/@pdestinationFileName

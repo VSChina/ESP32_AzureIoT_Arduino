@@ -24,7 +24,7 @@
 #include "iothub_client_dps_ll.h"
 #endif
 
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
 #include "iothub_client_ll_uploadtoblob.h"
 #endif
 
@@ -79,7 +79,7 @@ typedef struct IOTHUB_CLIENT_LL_HANDLE_DATA_TAG
     void* deviceTwinContextCallback;
     IOTHUB_CLIENT_RETRY_POLICY retryPolicy;
     size_t retryTimeoutLimitInSeconds;
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
     IOTHUB_CLIENT_LL_UPLOADTOBLOB_HANDLE uploadToBlobHandle;
 #endif
     uint32_t data_msg_id;
@@ -129,7 +129,7 @@ static int create_blob_upload_module(IOTHUB_CLIENT_LL_HANDLE_DATA* handle_data, 
     int result;
     (void)handle_data;
     (void)config;
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
     handle_data->uploadToBlobHandle = IoTHubClient_LL_UploadToBlob_Create(config);
     if (handle_data->uploadToBlobHandle == NULL)
     {
@@ -149,7 +149,7 @@ static int create_blob_upload_module(IOTHUB_CLIENT_LL_HANDLE_DATA* handle_data, 
 static void destroy_blob_upload_module(IOTHUB_CLIENT_LL_HANDLE_DATA* handle_data)
 {
     (void)handle_data;
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
     /*Codes_SRS_IOTHUBCLIENT_LL_02_046: [ If creating the TICK_COUNTER_HANDLE fails then IoTHubClient_LL_Create shall fail and return NULL. ]*/
     IoTHubClient_LL_UploadToBlob_Destroy(handle_data->uploadToBlobHandle);
 #endif
@@ -967,7 +967,7 @@ void IoTHubClient_LL_Destroy(IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle)
         /*Codes_SRS_IOTHUBCLIENT_LL_17_011: [IoTHubClient_LL_Destroy  shall free the resources allocated by IoTHubClient (if any).] */
         IoTHubClient_Auth_Destroy(handleData->authorization_module);
         tickcounter_destroy(handleData->tickCounter);
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
         IoTHubClient_LL_UploadToBlob_Destroy(handleData->uploadToBlobHandle);
 #endif
         STRING_delete(handleData->product_info);
@@ -1712,7 +1712,7 @@ IOTHUB_CLIENT_RESULT IoTHubClient_LL_SetOption(IOTHUB_CLIENT_LL_HANDLE iotHubCli
 
             /*Codes_SRS_IOTHUBCLIENT_LL_02_099: [ IoTHubClient_LL_SetOption shall return according to the table below ]*/
             IOTHUB_CLIENT_RESULT uploadToBlob_result; 
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
             uploadToBlob_result = IoTHubClient_LL_UploadToBlob_SetOption(handleData->uploadToBlobHandle, optionName, value);
             if(uploadToBlob_result == IOTHUB_CLIENT_ERROR)
             {
@@ -1721,7 +1721,7 @@ IOTHUB_CLIENT_RESULT IoTHubClient_LL_SetOption(IOTHUB_CLIENT_LL_HANDLE iotHubCli
             }
 #else
             uploadToBlob_result = IOTHUB_CLIENT_INVALID_ARG; /*harmless value (IOTHUB_CLIENT_INVALID_ARG)in the case when uploadtoblob is not compiled in, otherwise whatever IoTHubClient_LL_UploadToBlob_SetOption returned*/
-#endif /*DONT_USE_UPLOADTOBLOB*/
+#endif /*USE_UPLOADTOBLOB*/
 
             /*Codes_SRS_IOTHUBCLIENT_LL_12_023: [** `c2d_keep_alive_freq_secs` - shall set the cloud to device keep alive frequency(in seconds) for the connection. Zero means keep alive will not be sent. ]*/
             result =
@@ -2022,7 +2022,7 @@ IOTHUB_CLIENT_RESULT IoTHubClient_LL_DeviceMethodResponse(IOTHUB_CLIENT_LL_HANDL
     return result;
 }
 
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
 IOTHUB_CLIENT_RESULT IoTHubClient_LL_UploadToBlob(IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle, const char* destinationFileName, const unsigned char* source, size_t size)
 {
     IOTHUB_CLIENT_RESULT result;

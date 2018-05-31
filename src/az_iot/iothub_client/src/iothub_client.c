@@ -28,7 +28,7 @@ typedef struct IOTHUB_CLIENT_INSTANCE_TAG
     THREAD_HANDLE ThreadHandle;
     LOCK_HANDLE LockHandle;
     sig_atomic_t StopThread;
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
     SINGLYLINKEDLIST_HANDLE savedDataToBeCleaned; /*list containing UPLOADTOBLOB_SAVED_DATA*/
 #endif
     int created_with_transport_handle;
@@ -46,7 +46,7 @@ typedef struct IOTHUB_CLIENT_INSTANCE_TAG
     struct IOTHUB_QUEUE_CONTEXT_TAG* method_user_context;
 } IOTHUB_CLIENT_INSTANCE;
 
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
 typedef struct UPLOADTOBLOB_SAVED_DATA_TAG
 {
     unsigned char* source;
@@ -127,7 +127,7 @@ typedef struct IOTHUB_QUEUE_CONTEXT_TAG
 /*used by unittests only*/
 const size_t IoTHubClient_ThreadTerminationOffset = offsetof(IOTHUB_CLIENT_INSTANCE, StopThread);
 
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
 /*this function is called from _Destroy and from ScheduleWork_Thread to join finished blobUpload threads and free that memory*/
 static void garbageCollectorImpl(IOTHUB_CLIENT_INSTANCE* iotHubClientInstance)
 {
@@ -534,7 +534,7 @@ static void ScheduleWork_Thread_ForMultiplexing(void* iotHubClientHandle)
 {
     IOTHUB_CLIENT_INSTANCE* iotHubClientInstance = (IOTHUB_CLIENT_INSTANCE*)iotHubClientHandle;
 
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
     garbageCollectorImpl(iotHubClientInstance);
 #endif
     if (Lock(iotHubClientInstance->LockHandle) == LOCK_OK)
@@ -577,7 +577,7 @@ static int ScheduleWork_Thread(void* threadArgument)
                 /* Codes_SRS_IOTHUBCLIENT_01_039: [All calls to IoTHubClient_LL_DoWork shall be protected by the lock created in IotHubClient_Create.] */
                 IoTHubClient_LL_DoWork(iotHubClientInstance->IoTHubClientLLHandle);
 
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
                 garbageCollectorImpl(iotHubClientInstance);
 #endif
                 VECTOR_HANDLE call_backs = VECTOR_move(iotHubClientInstance->saved_user_callback_list);
@@ -653,7 +653,7 @@ static IOTHUB_CLIENT_INSTANCE* create_iothub_instance(const IOTHUB_CLIENT_CONFIG
         }
         else
         {
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
             /*Codes_SRS_IOTHUBCLIENT_02_060: [ IoTHubClient_Create shall create a SINGLYLINKEDLIST_HANDLE containing THREAD_HANDLE (created by future calls to IoTHubClient_UploadToBlobAsync). ]*/
             if ((result->savedDataToBeCleaned = singlylinkedlist_create()) == NULL)
             {
@@ -758,7 +758,7 @@ static IOTHUB_CLIENT_INSTANCE* create_iothub_instance(const IOTHUB_CLIENT_CONFIG
                     {
                         Lock_Deinit(result->LockHandle);
                     }
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
                     singlylinkedlist_destroy(result->savedDataToBeCleaned);
 #endif
                     LogError("Failure creating iothub handle");
@@ -903,7 +903,7 @@ void IoTHubClient_Destroy(IOTHUB_CLIENT_HANDLE iotHubClientHandle)
             LogError("unable to Lock - - will still proceed to try to end the thread without locking");
         }
 
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
         /*Codes_SRS_IOTHUBCLIENT_02_069: [ IoTHubClient_Destroy shall free all data created by IoTHubClient_UploadToBlobAsync ]*/
         /*wait for all uploading threads to finish*/
         while (singlylinkedlist_get_head_item(iotHubClientInstance->savedDataToBeCleaned) != NULL)
@@ -1763,7 +1763,7 @@ IOTHUB_CLIENT_RESULT IoTHubClient_DeviceMethodResponse(IOTHUB_CLIENT_HANDLE iotH
     return result;
 }
 
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
 static int uploadingThread(void *data)
 {
     UPLOADTOBLOB_SAVED_DATA* savedData = (UPLOADTOBLOB_SAVED_DATA*)data;
@@ -1817,7 +1817,7 @@ static int uploadingThread(void *data)
 }
 #endif
 
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
 IOTHUB_CLIENT_RESULT IoTHubClient_UploadToBlobAsync(IOTHUB_CLIENT_HANDLE iotHubClientHandle, const char* destinationFileName, const unsigned char* source, size_t size, IOTHUB_CLIENT_FILE_UPLOAD_CALLBACK iotHubClientFileUploadCallback, void* context)
 {
     IOTHUB_CLIENT_RESULT result;
@@ -1970,4 +1970,4 @@ IOTHUB_CLIENT_RESULT IoTHubClient_UploadToBlobAsync(IOTHUB_CLIENT_HANDLE iotHubC
     }
     return result;
 }
-#endif /*DONT_USE_UPLOADTOBLOB*/
+#endif /*USE_UPLOADTOBLOB*/

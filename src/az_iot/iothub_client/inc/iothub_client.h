@@ -326,7 +326,7 @@ extern "C"
     */
     MOCKABLE_FUNCTION(, IOTHUB_CLIENT_RESULT, IoTHubClient_DeviceMethodResponse, IOTHUB_CLIENT_HANDLE, iotHubClientHandle, METHOD_HANDLE, methodId, const unsigned char*, response, size_t, response_size, int, statusCode);
 
-#ifndef DONT_USE_UPLOADTOBLOB
+#ifdef USE_UPLOADTOBLOB
     /**
     * @brief	IoTHubClient_UploadToBlobAsync uploads data from memory to a file in Azure Blob Storage.
     *

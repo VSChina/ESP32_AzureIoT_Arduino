@@ -606,6 +606,8 @@ void Esp32MQTTClient_Close(void)
         IoTHubClient_LL_Destroy(iotHubClientHandle);
         iotHubClientHandle = NULL;
     }
+
+    platform_deinit();
 }
 
 void Esp32MQTTClient_SetConnectionStatusCallback(CONNECTION_STATUS_CALLBACK connection_status_callback)

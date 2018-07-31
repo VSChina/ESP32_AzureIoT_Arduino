@@ -6,7 +6,7 @@ This library is a port of the
  to Arduino for esp32 devices. It allows you to use several Arduino compatible ESP32 boards with Azure IoT Hub.
 
 ## Currently supported hardware
-- ESP832 based boards with [esp32/arduino](https://github.com/espressif/arduino-esp32)
+- ESP32 based boards with [esp32/arduino](https://github.com/espressif/arduino-esp32)
   - [M5Stack](http://www.M5Stack.com)
 
 It should also work for other esp32 boards.
@@ -23,7 +23,7 @@ You should have the following ready before beginning with any board:
 
 1. Install esp32 board support into your Arduino IDE.
     * Start Arduino and open Preferences window.
-    * Enter esp32 package URL into Additional Board Manager URLs field. You can add multiple URLs, separating them with commas.
+    * Enter esp32 package URL https://dl.espressif.com/dl/package_esp32_index.json into Additional Board Manager URLs field. You can add multiple URLs, separating them with commas.
     * Open Boards Manager from Tools > Board menu and install esp32 platform.
     * Select your esp32 board from Tools > Board menu after installation
 
@@ -40,7 +40,7 @@ There are a couple of ways you can contribute to this repo:
 - **Code**: Contribute bug fixes, features or design changes.
 
 Contributions for code that is not esp32 Arduino-specific can be made to the 
-[Azuure IoT C SDK](https://github.com/azure/azure-iot-sdk-c)
+[Azure IoT C SDK](https://github.com/azure/azure-iot-sdk-c)
 
 ## Code of Conduct
 

@@ -421,6 +421,7 @@ static int parse_device_twin_topic_info(const char* resp_topic, bool* patch_msg,
         else
         {
             result = __FAILURE__;
+            *request_id = 0;
             size_t token_count = 0;
             while (STRING_TOKENIZER_get_next_token(token_handle, token_value, "/") == 0)
             {

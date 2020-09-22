@@ -92,7 +92,7 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
     result = 404;
   }
 
-  *response_size = strlen(responseMessage) + 1;
+  *response_size = strlen(responseMessage);
   *response = (unsigned char *)strdup(responseMessage);
 
   return result;
